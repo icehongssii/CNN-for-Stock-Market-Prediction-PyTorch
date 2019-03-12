@@ -1,7 +1,7 @@
 # Freddy @DC, uWaterloo, ON, Canada
 # Nov 13, 2017
 
-import torch 
+import torch
 import torch.nn as nn
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
@@ -18,7 +18,7 @@ from utils import *
 from logger import Logger
 
 # Hyper Parameters
-num_epochs = 12
+num_epochs = 2
 batch_size = 256
 learning_rate = 2e-4
 
@@ -29,19 +29,19 @@ load_prev_model = False
 direct_test = False
 use_gpu = False
 
-if(sys.argv[2] == '1'):
-    debug = True
-if(sys.argv[3] == '1'):
-    load_prev_model = True
-if(sys.argv[4] == '1'):
-    direct_test = True
+# if(sys.argv[2] == '1'):
+#     debug = True
+# if(sys.argv[3] == '1'):
+#     load_prev_model = True
+# if(sys.argv[4] == '1'):
+#     direct_test = True
 
 if(torch.cuda.is_available()):
     use_gpu = True
 
 
 
-''' Data ''' 
+''' Data '''
 
 # stock Datase
 train_set = stock_img_dataset(csv_file=data_dir+'/sample/label_table_train.csv',
@@ -66,13 +66,13 @@ validation_set = stock_img_dataset(csv_file=data_dir+'/sample/label_table_valida
 
 # Data Loader (Input Pipeline)
 train_loader = torch.utils.data.DataLoader(dataset=train_set,
-                                           batch_size=batch_size, 
+                                           batch_size=batch_size,
                                            shuffle=True)
 test_loader = torch.utils.data.DataLoader(dataset=test_set,
-                                          batch_size=batch_size, 
+                                          batch_size=batch_size,
                                           shuffle=False)
 val_loader = torch.utils.data.DataLoader(dataset=validation_set,
-                                          batch_size=batch_size, 
+                                          batch_size=batch_size,
                                           shuffle=False)
 
 
@@ -127,7 +127,7 @@ class res_cnn(nn.Module):
             nn.MaxPool2d(2))
         #self.fc = nn.Linear(4*4*256, 3)
         self.fc = nn.Linear(4*4*256, 1)
-        
+
     def forward(self, x):
         out1 = self.layer1(x)
         out2 = self.layer2(out1)
@@ -155,11 +155,11 @@ class res_cnn(nn.Module):
 class google_net(nn.Module):
     def __init__(self):
         super(google_net, self).__init__()
-        
+
         self.conv2d_1x1_a = nn.Conv2d(4,64,kernel_size=1),
         self.conv2d_3x3_a = nn.Conv2d(4,64,kernel_size=3,padding=1),
         self.conv2d_5x5_a = nn.Conv2d(4,64,kernel_size=5,padding=2),
-        
+
         self.conv2d_1x1_b = nn.Conv2d(64,128,kernel_size=1)
         self.conv2d_3x3_b = nn.Conv2d(64,128,kernel_size=3,padding=1)
         self.conv2d_5x5_b = nn.Conv2d(64,128,kernel_size=5,padding=2)
@@ -174,7 +174,7 @@ class google_net(nn.Module):
 
 
 
-''' train and test ''' 
+''' train and test '''
 
 cnn = res_cnn().double()
 if(use_gpu):
@@ -195,17 +195,17 @@ logger = Logger('./logs')
 def test_module(train_size, epoch, data_loader, write=False):
     # Test the Model
     cnn.eval()  # Change model to 'eval' mode (BN uses moving mean/var).
-    
+
     correct_d1 = 0
     correct_d2 = 0
     correct_d3 = 0
     total = 0
     counter = 0
-    
+
     for sample in tqdm(data_loader):
         if(debug and counter >= 3): break
         counter+=1
-        
+
         images = Variable(sample['image'])
         labels = Variable(sample['labels'])
         if(use_gpu):
@@ -213,7 +213,7 @@ def test_module(train_size, epoch, data_loader, write=False):
             labels = labels.cuda()
         outputs = cnn(images)
         #_, predicted = torch.max(outputs.data, 1)
-        
+
         #labels = to_np(labels.view(-1,1))
         #predicted = np.sign(to_np(outputs.view(-1,1)))
         #print(labels.shape, predicted.shape)
@@ -240,10 +240,10 @@ def test_module(train_size, epoch, data_loader, write=False):
         correct_d1 += (predicted_d1 == labels_d1).sum()
         #correct_d2 += (predicted_d2 == labels_d2).sum()
         #correct_d3 += (predicted_d3 == labels_d3).sum()
-        
+
         total += labels.shape[0]
-        
-        
+
+
     acc1 = correct_d1 / total
     #acc2 = correct_d2 / total
     #acc3 = correct_d3 / total
@@ -260,7 +260,7 @@ def test_module(train_size, epoch, data_loader, write=False):
     if(write):
         df = pd.DataFrame([[train_size,test_size,acc1,acc2,acc3,acc_total]])
         df.to_csv('./accuracy_records.csv', mode='a',header=False)
-    
+
 
     #============ TensorBoard logging ============#
     # log validation acc
@@ -271,7 +271,7 @@ def test_module(train_size, epoch, data_loader, write=False):
                 #'acc_d3': acc3*100,
                 #'acc_avg': acc_total*100
                 }
-        
+
         for tag, value in info.items():
             logger.scalar_summary(tag, value, epoch)
 
@@ -303,7 +303,7 @@ for epoch in range(num_epochs):
             images = images.cuda()
             labels = labels.cuda()
         #print(images.size(), labels.size())
-        
+
         # Forward + Backward + Optimize
         optimizer.zero_grad()
         outputs = cnn(images).float()
@@ -314,23 +314,27 @@ for epoch in range(num_epochs):
         outputs = outputs[:,0]
         loss = criterion(outputs.float(), labels)
         # costly? change this step?
-        df = pd.DataFrame([[i+1+prev_i ,to_np(loss)[0]]])
+        print(to_np(loss))
+        #print(to_np(loss)[0]) causes IndexError changed into to_np(loss)
+        df = pd.DataFrame([[i+1+prev_i ,to_np(loss)]])
         df.to_csv('./training_loss_records.csv', mode='a',header=False)
         loss.backward()
         optimizer.step()
-        
+
         # costly? change this step?
         total += to_np(labels).shape[0]
         #total += labels.shape[0] # test
 
+        #instead of using loss.data[0], use loss.item() otherwish it caues keyerror
+        #IndexError: invalid index of a 0-dim tensor. Use tensor.item() to convert a 0-dim tensor to a Python numb
         if (i+1) % 1 == 0:
-            print ('Epoch [%d/%d], Batch [%d/%d] Loss: %.4f' 
-                   %(epoch+1, num_epochs,i+1, math.ceil(len(train_set)/batch_size),loss.data[0]))
-            
+            print ('Epoch [%d/%d], Batch [%d/%d] Loss: %.4f'
+                   %(epoch+1, num_epochs,i+1, math.ceil(len(train_set)/batch_size),loss.item()))
+
             #============ TensorBoard logging ============#
             # (1) Log the scalar values
             info = {
-            'loss': loss.data[0]
+            'loss': loss.item()#was modified
             }
 
             for tag, value in info.items():
@@ -341,9 +345,9 @@ for epoch in range(num_epochs):
                 tag = tag.replace('.', '/')
                 logger.histo_summary(tag, to_np(value), i+1+prev_i)
                 logger.histo_summary(tag+'/grad', to_np(value.grad), i+1+prev_i)
-    
+
     # test at the end of every epoch
-    if(epoch + 1 == num_epochs ): 
+    if(epoch + 1 == num_epochs ):
         # last epoch ends
         print('final test:')
         test_module(total, -1, test_loader, True)
@@ -351,15 +355,14 @@ for epoch in range(num_epochs):
     else:
         # during training
         test_module(total, epoch+1,val_loader,False)
-    
+
     # Save the Trained Model
     if(not debug):
         torch.save(cnn.state_dict(), 'cnn.pkl')
-    
+
     # rest 20min for every n epochs
     #rest_time = 1200 #20min
     #n = 10
     #if((epoch+1) % n == 0 and (epoch+1) != num_epochs):
     #    print('Having a rest...')
     #    time.sleep(rest_time)
-

@@ -14,7 +14,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.ticker as mtick
-from matplotlib.finance import candlestick_ohlc
+#from matplotlib.finance import candlestick_ohlc
+from mpl_finance import candlestick_ohlc
 
 # yahoo data
 #from pandas_datareader import data as pdr
@@ -59,5 +60,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-

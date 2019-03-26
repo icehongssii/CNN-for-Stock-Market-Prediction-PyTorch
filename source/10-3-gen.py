@@ -11,7 +11,8 @@ import os
 from tqdm import *
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from matplotlib.finance import candlestick_ohlc
+from mpl_finance import candlestick_ohlc
+#from matplotlib.finance import candlestick_ohlc
 import warnings
 warnings.filterwarnings("ignore")
 from data_gen import data_plot
@@ -23,7 +24,7 @@ def main():
     #print(data.head())
     data = pd.read_csv(sys.argv[1], parse_dates=True, dayfirst=True)# argv[1]: stock_symbol.txt
     # some preprocessing
-    data[['Open','High','Low','Close']] = data[['Open','High','Low','Close']].astype('float32')     
+    data[['Open','High','Low','Close']] = data[['Open','High','Low','Close']].astype('float32')
     data["Date"] = data["Date"].apply(mdates.datestr2num)
     data_len = len(data)
     stock_symbol = sys.argv[1].split('/')[-1][:-4] # remove .txt
@@ -35,13 +36,13 @@ def main():
         data_close = data_cur['Close']
         labels = []
         for i in range(0,13):
-            # draw day [0,1,...,9], predict day [10,11,12] 
+            # draw day [0,1,...,9], predict day [10,11,12]
             # positive label 1, negative label -1
             last_4 = data_close[9:13].values
             labels_raw = last_4[1:4] - last_4[0]
             labels = list(map(one_hot,labels_raw))
         counter = counter + 13
-        
+
         # plot
         fig = data_plot(data_cur[0:10]) # only plot the first 10 days
         #fig.set_size_inches(8,8);
@@ -64,5 +65,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-

@@ -1,3 +1,17 @@
+# Requirements
+`conda create -f environment.yml`    
+`pip install https://github.com/matplotlib/mpl_finance/archive/master.zip`    
+[mpl_finace was deprecated](https://stackoverflow.com/questions/42373104/since-matplotlib-finance-has-been-deprecated-how-can-i-use-the-new-mpl-finance)
+
+# How to run
+go to `source` dir then run below code    
+`python cnn4matrix matrixdata`
+
+
+# Options
+if you attempt to make new label and new matrix ..     
+`python main-gen.py -m ohlcvdata 10 matrixdata`
+
 # Can Machine Reads Like Analysts Do?
 
 - Train a CNN to read candlestick graphs, predicting future trend.

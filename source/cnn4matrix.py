@@ -31,12 +31,12 @@ load_prev_model = False
 direct_test = False
 use_gpu = False
 
-if(sys.argv[2] == '1'):
-    debug = True
-if(sys.argv[3] == '1'):
-    load_prev_model = True
-if(sys.argv[4] == '1'):
-    direct_test = True
+# if(sys.argv[2] == '1'):
+#     debug = True
+# if(sys.argv[3] == '1'):
+#     load_prev_model = True
+# if(sys.argv[4] == '1'):
+#     direct_test = True
 
 if(torch.cuda.is_available()):
     use_gpu = True
@@ -301,7 +301,7 @@ for epoch in range(num_epochs):
         #============ TensorBoard logging ============#
         # (1) Log the scalar values
         info = {
-            'loss': loss.data[0]
+            'loss': loss.data
         }
 
         for tag, value in info.items():

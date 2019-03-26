@@ -1,7 +1,8 @@
 # Requirements
 `conda env create -f environment.yml`    
 `pip install https://github.com/matplotlib/mpl_finance/archive/master.zip`    
-[mpl_finace was deprecated](https://stackoverflow.com/questions/42373104/since-matplotlib-finance-has-been-deprecated-how-can-i-use-the-new-mpl-finance)
+[mpl_finace was deprecated](https://stackoverflow.com/questions/42373104/since-matplotlib-finance-has-been-deprecated-how-can-i-use-the-new-mpl-finance)    
+Possibly it will be updated by using docker 
 
 # How to run
 go to `source` dir then run below code   

@@ -4,7 +4,10 @@
 [mpl_finace was deprecated](https://stackoverflow.com/questions/42373104/since-matplotlib-finance-has-been-deprecated-how-can-i-use-the-new-mpl-finance)
 
 # How to run
-go to `source` dir then run below code    
+go to `source` dir then run below code   
+1. cnn.py version
+`python cnn4matrix ../data`
+2. cnn4matrix.py version
 `python cnn4matrix matrixdata`
 
 

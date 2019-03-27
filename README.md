@@ -7,9 +7,9 @@ Possibly it will be updated by using docker
 # How to run
 go to `source` dir then run below code   
 1. cnn.py version
-`python cnn4matrix ../data`
+`python cnn.py ../data`
 2. cnn4matrix.py version
-`python cnn4matrix matrixdata`
+`python cnn4matrix.py matrixdata`
 
 
 # Options
